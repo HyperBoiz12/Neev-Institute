@@ -1,932 +1,311 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neev Institute - Official Website</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Neev Institute | Excellence in Foundation</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --brand-red: #D00000;
+            --pure-black: #000000;
+            --zinc-900: #0A0A0A;
+            --zinc-800: #18181b;
+            --design-blue: #00d2ff;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #1a202c; /* Deep charcoal background */
-            color: #e2e8f0; /* Soft white text */
-            scroll-behavior: smooth;
+            background-color: var(--pure-black);
+            color: #FFFFFF;
+            overflow-x: hidden;
         }
-        .header-bg {
-            background-color: rgba(26, 32, 44, 0.9);
-            backdrop-filter: blur(10px);
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+
+        /* Loading Screen */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--pure-black);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.8s ease, visibility 0.8s;
         }
-        .accent-red {
-            color: #e53e3e;
+
+        .loader-logo {
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            animation: pulse 1.5s infinite alternate;
         }
-        /* Fade-in animation on scroll */
-        .fade-in {
+
+        .loader-bar {
+            width: 200px;
+            height: 2px;
+            background: #222;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loader-progress {
+            width: 0%;
+            height: 100%;
+            background: var(--brand-red);
+            position: absolute;
+            animation: progress 2s ease-in-out forwards;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.4; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Utils */
+        .text-brand-red { color: var(--brand-red); }
+        .bg-brand-red { background-color: var(--brand-red); }
+        
+        .reveal {
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .fade-in.show {
+
+        .reveal.active {
             opacity: 1;
             transform: translateY(0);
         }
-        /* Active nav link style */
-        .nav-link.active {
-            color: #e53e3e;
-            font-weight: 700;
-        }
-        /* Pulse animation for the button */
-        @keyframes pulse-once {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        .animate-pulse-once {
-            animation: pulse-once 1.5s ease-in-out;
-        }
-        /* FAQ specific styles */
-        .faq-question {
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
-            padding-top: 0;
-            padding-bottom: 0;
-        }
-        .faq-answer.open {
-            max-height: 200px; /* Adjust as needed */
-            padding-top: 1rem;
-            padding-bottom: 1rem;
-        }
-        /* Ripple effect for buttons */
-        .ripple {
-            position: relative;
-            overflow: hidden;
-            transform: translate3d(0, 0, 0);
-        }
-        .ripple:after {
-            content: "";
-            display: block;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
-            background-repeat: no-repeat;
-            background-position: 50%;
-            transform: scale(10, 10);
-            opacity: 0;
-            transition: transform 0.6s, opacity 1s;
-        }
-        .ripple:active:after {
-            transform: scale(0, 0);
-            opacity: 0.3;
-            transition: 0s;
-        }
-        /* Glare effect on hover */
-        .glare-hover {
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-        .glare-hover::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: skewX(-20deg);
-            transition: left 0.8s ease;
-            z-index: -1;
-        }
-        .glare-hover:hover::before {
-            left: 100%;
+
+        .card-dark {
+            background: #0D0D0D;
+            border: 1px solid #1F1F1F;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* Hero section is now just a solid color */
-        #hero {
-            position: relative;
+        .card-dark:hover {
+            border-color: var(--brand-red);
+            background: #121212;
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px -10px rgba(208, 0, 0, 0.3);
         }
 
-        /* Hero text animation */
-        .hero-text-shadow {
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
-            transition: text-shadow 0.3s ease;
-        }
-        
-        /* Mobile menu animation */
-        #mobile-menu {
-            max-height: 0;
+        .btn-red {
+            background-color: var(--brand-red);
+            transition: all 0.3s ease;
+            position: relative;
             overflow: hidden;
-            transition: max-height 0.5s ease-in-out;
         }
-        #mobile-menu.open {
-            max-height: 500px; /* A value large enough to fit all content */
+
+        .btn-red:hover {
+            background-color: #FF0000;
+            box-shadow: 0 0 25px rgba(208, 0, 0, 0.5);
+        }
+
+        /* Gradient Text Styles */
+        .gradient-text-red {
+            background: linear-gradient(to right, #ffffff, var(--brand-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .naman-attribution {
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 50%, #000000 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .footer-link {
+            color: #71717a;
+            transition: all 0.2s ease;
+        }
+        .footer-link:hover {
+            color: var(--brand-red);
+            padding-left: 5px;
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200">
+<body class="bg-black">
 
-    <!-- Header & Navigation -->
-    <header id="main-header" class="header-bg sticky top-0 z-50 shadow-lg">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-                <!-- Neev Institute Logo -->
-                <img src="https://placehold.co/50x50/1a202c/e53e3e?text=Logo" alt="Neev Institute Logo" class="rounded-full w-10 h-10">
-                <a href="#hero" class="text-3xl font-bold accent-red">Neev Institute</a>
+    <!-- Loading Screen -->
+    <div id="loader">
+        <div class="loader-logo">
+            NEEV<span class="text-brand-red">.</span>
+        </div>
+        <div class="loader-bar">
+            <div class="loader-progress"></div>
+        </div>
+        <div class="mt-4 text-[10px] tracking-[0.4em] uppercase font-black text-zinc-500">Establishing Foundation</div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-black/90 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-brand-red rounded flex items-center justify-center">
+                    <span class="text-white font-black text-xl">N</span>
+                </div>
+                <div class="flex flex-col leading-none">
+                    <span class="text-xl font-black tracking-tighter">NEEV</span>
+                    <span class="text-[10px] font-bold tracking-[0.2em] text-brand-red uppercase">Institute</span>
+                </div>
             </div>
             
-            <!-- Desktop Navigation -->
-            <ul id="desktop-nav" class="hidden md:flex space-x-8 text-lg font-medium">
-                <li><a href="#about" class="nav-link hover:text-red-500 transition duration-300">About Us</a></li>
-                <li><a href="#philosophy" class="nav-link hover:text-red-500 transition duration-300">Our Philosophy</a></li>
-                <li><a href="#testimonials" class="nav-link hover:text-red-500 transition duration-300">Testimonials</a></li>
-                <li><a href="#success-stories" class="nav-link hover:text-red-500 transition duration-300">Success Stories</a></li>
-                <li><a href="#thoughts" class="nav-link hover:text-red-500 transition duration-300">Student Thoughts</a></li>
-                <li><a href="#faq" class="nav-link hover:text-red-500 transition duration-300">FAQs</a></li>
-                <li><a href="#courses" class="nav-link hover:text-red-500 transition duration-300">Courses</a></li>
-                <li><a href="#gallery" class="nav-link hover:text-red-500 transition duration-300">Gallery</a></li>
-                <li><a href="#admissions" class="nav-link hover:text-red-500 transition duration-300">Admissions</a></li>
-                <li><a href="#contact" class="nav-link hover:text-red-500 transition duration-300">Contact</a></li>
-            </ul>
-
-            <!-- Mobile Menu Button -->
-            <button id="mobile-menu-btn" class="md:hidden text-gray-200 focus:outline-none">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            <div class="hidden md:flex items-center space-x-10 text-xs font-bold uppercase tracking-widest">
+                <a href="#home" class="hover:text-brand-red transition-colors">Home</a>
+                <a href="#courses" class="hover:text-brand-red transition-colors">Courses</a>
+                <a href="#mentors" class="hover:text-brand-red transition-colors">Mentors</a>
+                <a href="#contact" class="btn-red px-6 py-3 rounded text-white tracking-widest">Enroll Now</a>
+            </div>
+            
+            <button class="md:hidden text-2xl text-brand-red">
+                <i class="fas fa-bars"></i>
             </button>
-        </nav>
-        
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="md:hidden bg-gray-900 shadow-md">
-            <ul class="flex flex-col items-center py-4 space-y-4 text-lg font-medium">
-                <li><a href="#about" class="block w-full text-center py-2 hover:bg-gray-800 transition duration-300">About Us</a></li>
-                <li><a href="#philosophy" class="block w-full text-center py-2 hover:bg-gray-800 transition duration-300">Our Philosophy</a></li>
-                <li><a href="#testimonials" class="block w-full text-center py-2 hover:bg-gray-800 transition duration-300">Testimonials</a></li>
-                <li><a href="#success-stories" class="block w-full text-center py-2 hover:bg-gray-800 transition duration-300">Success Stories</a></li>
-                <li><a href="#thoughts" class="block w-full text-center py-2 hover:bg-gray-800 transition duration-300">Student Thoughts</a></li>
-                <li><a href="#faq" class="block w-full text-center py-2 hover:bg-gray-800 transition duration-300">FAQs</a></li>
-                <li><a href="#courses" class="block w-full text-center py-2 hover:bg-gray-800 transition duration-300">Courses</a></li>
-                <li><a href="#gallery" class="block w-full text-center py-2 hover:bg-gray-800 transition duration-300">Gallery</a></li>
-                <li><a href="#admissions" class="block w-full text-center py-2 hover:bg-gray-800 transition duration-300">Admissions</a></li>
-                <li><a href="#contact" class="block w-full text-center py-2 hover:bg-gray-800 transition duration-300">Contact</a></li>
-            </ul>
         </div>
-    </header>
+    </nav>
 
-    <main class="container mx-auto px-6">
-        <!-- Hero Section -->
-        <section id="hero" class="min-h-screen flex flex-col items-center justify-center text-center py-20 fade-in bg-gray-900">
-            <div class="relative z-10 p-8 rounded-xl bg-gray-900 bg-opacity-70 shadow-2xl">
-                <h1 class="text-4xl md:text-5xl font-extrabold leading-tight text-white mb-4 hero-text-shadow">
-                    Neev Institute: Building Your Foundation for Success
-                </h1>
-                <p class="text-lg md:text-xl text-gray-400 max-w-2xl mb-8">
-                    With a proven track record since 2001, Neev Institute is dedicated to providing quality education in Commerce and foundational subjects for students in Delhi. We empower young minds to excel, build confidence, and achieve their academic goals.
-                </p>
-                <a href="#contact" class="relative overflow-hidden bg-red-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out hover:bg-red-700 hover:shadow-xl animate-pulse-once glare-hover">
-                    Get Started Today
-                </a>
-            </div>
-        </section>
+    <!-- Hero -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center text-center px-6 overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_#200000_0%,_transparent_70%)] opacity-50"></div>
+        <div class="relative z-10 max-w-4xl reveal">
+            <span class="inline-block py-1 px-4 border border-brand-red text-brand-red text-[10px] font-black tracking-[0.5em] uppercase mb-8">
+                Since 2001
+            </span>
+            <h1 class="text-6xl md:text-9xl font-black mb-8 leading-none tracking-tighter">
+                UNSHAKABLE <br><span class="text-brand-red italic underline decoration-4 underline-offset-8">FOUNDATION.</span>
+            </h1>
+            <p class="text-gray-400 text-lg md:text-xl mb-12 max-w-2xl mx-auto font-medium">
+                The premier coaching destination for academic excellence and professional language proficiency.
+            </p>
+        </div>
+    </section>
 
-        <!-- About Us Section -->
-        <section id="about" class="py-20 fade-in">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-4xl font-bold mb-16 accent-red">About Our Founders</h2>
-                <div class="grid md:grid-cols-2 gap-12 text-left">
-                    <!-- Arun Gupta -->
-                    <div class="bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl">
-                        <div class="flex items-center space-x-4 mb-4">
-                            <h3 class="text-2xl font-semibold text-gray-100">Arun Gupta</h3>
-                            <span class="text-red-400 text-sm">Director & Commerce Educator</span>
-                        </div>
-                        <p class="text-gray-400">
-                            With over two decades of experience since 2001, Arun Gupta is a seasoned educator specializing in Commerce. He focuses on building a strong academic foundation in Accountancy, Economics, and Business Studies for students in Class 11th and 12th, preparing them for future success. He believes that a deep understanding of core concepts is the key to mastering any subject. His teaching methodology combines theoretical knowledge with practical applications, using real-world examples to make complex topics easy to grasp.
-                        </p>
-                    </div>
-                    
-                    <!-- Rajni Gupta -->
-                    <div class="bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl">
-                        <div class="flex items-center space-x-4 mb-4">
-                            <h3 class="text-2xl font-semibold text-gray-100">Rajni Gupta</h3>
-                            <span class="text-red-400 text-sm">Director & Primary Educator</span>
-                        </div>
-                        <p class="text-gray-400">
-                            Since 2001, Rajni Gupta has been dedicated to creating a supportive learning environment for students from Class 5th to 10th. Her comprehensive approach ensures that young minds develop a strong and confident grasp of all subjects. She specializes in building a love for learning in young students, focusing on fundamental concepts in subjects like Science, Mathematics, and English. Her patient and encouraging style helps students overcome academic challenges and build confidence.
-                        </p>
-                    </div>
+    <!-- Courses (Brief View) -->
+    <section id="courses" class="py-32 bg-black">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card-dark p-12 reveal border-l-4 border-l-brand-red">
+                    <div class="text-brand-red text-4xl mb-8"><i class="fas fa-microscope"></i></div>
+                    <h4 class="text-2xl font-black mb-4 uppercase italic">Science & Math</h4>
+                    <p class="text-zinc-500 text-sm mb-6">Foundation building for class 5-10 with advanced analytical approaches.</p>
                 </div>
-            </div>
-        </section>
-
-        <!-- Our Philosophy Section -->
-        <section id="philosophy" class="py-20 fade-in">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-4xl font-bold mb-12 accent-red">Our Philosophy</h2>
-                <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-16">
-                    The word **'Neev'** means **'Foundation'**. Our mission is to lay a strong, unshakable academic foundation for every student, empowering them to excel in their studies and beyond.
-                </p>
-                <div class="grid md:grid-cols-3 gap-8 text-left">
-                    <div class="bg-gray-800 p-6 rounded-xl shadow-lg transition-all duration-300 hover:bg-gray-700 hover:scale-105">
-                        <h3 class="text-xl font-bold text-red-400 mb-2">Personalized Attention</h3>
-                        <p class="text-gray-400">
-                            We believe in small class sizes to ensure every student receives the individual guidance and support they need to thrive. Our educators take the time to understand each student's unique learning style and tailor their approach accordingly.
-                        </p>
-                    </div>
-                    <div class="bg-gray-800 p-6 rounded-xl shadow-lg transition-all duration-300 hover:bg-gray-700 hover:scale-105">
-                        <h3 class="text-xl font-bold text-red-400 mb-2">Experienced Faculty</h3>
-                        <p class="text-gray-400">
-                            Our founders bring over two decades of dedicated teaching experience, with a deep understanding of student needs and academic requirements. Their expertise is our greatest asset, ensuring a high-quality learning experience.
-                        </p>
-                    </div>
-                    <div class="bg-gray-800 p-6 rounded-xl shadow-lg transition-all duration-300 hover:bg-gray-700 hover:scale-105">
-                        <h3 class="text-xl font-bold text-red-400 mb-2">Holistic Development</h3>
-                        <p class="text-gray-400">
-                            Our approach goes beyond rote learning, focusing on critical thinking, problem-solving, and building a genuine passion for learning. We aim to equip students with the skills they need to succeed in school and life.
-                        </p>
-                    </div>
+                <div class="card-dark p-12 reveal" style="transition-delay: 100ms;">
+                    <div class="text-brand-red text-4xl mb-8"><i class="fas fa-briefcase"></i></div>
+                    <h4 class="text-2xl font-black mb-4 uppercase italic">Commerce</h4>
+                    <p class="text-zinc-500 text-sm mb-6">Expert coaching for Class 11-12 Accounts, Economics, and Business Studies.</p>
                 </div>
-            </div>
-        </section>
-
-        <!-- Testimonials Section -->
-        <section id="testimonials" class="py-20 fade-in">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-4xl font-bold mb-12 accent-red">What Our Students and Parents Say</h2>
-                <!-- Container for dynamically loaded testimonials -->
-                <div id="testimonials-container" class="grid md:grid-cols-2 gap-8 text-left">
-                    <!-- Placeholder Testimonials -->
-                    <p class="col-span-full text-center text-gray-500 italic">Loading testimonials...</p>
+                <div class="card-dark p-12 reveal" style="transition-delay: 200ms;">
+                    <div class="text-brand-red text-4xl mb-8"><i class="fas fa-language"></i></div>
+                    <h4 class="text-2xl font-black mb-4 uppercase italic">Languages</h4>
+                    <p class="text-zinc-500 text-sm mb-6">Professional Spanish & Hindi certifications for academic and career growth.</p>
                 </div>
-            </div>
-        </section>
-
-        <!-- Success Stories Section -->
-        <section id="success-stories" class="py-20 fade-in">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-4xl font-bold mb-12 accent-red">Success Stories</h2>
-                <!-- Container for dynamically loaded success stories -->
-                <div id="success-stories-container" class="space-y-12 text-left">
-                    <p class="text-center text-gray-500 italic">Loading success stories...</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Student Thoughts Section -->
-        <section id="thoughts" class="py-20 fade-in">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-4xl font-bold mb-12 accent-red">Student & Parent Thoughts</h2>
-                <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-16">
-                    Share your experience and thoughts about Neev Institute. Your feedback helps our community grow!
-                </p>
-                <!-- Form to submit new thoughts -->
-                <div class="bg-gray-800 p-8 rounded-xl shadow-lg mb-12">
-                    <form id="thought-form" class="space-y-4 text-left">
-                        <div>
-                            <label for="thought-name" class="block text-gray-300 mb-1">Your Name</label>
-                            <input type="text" id="thought-name" name="thought-name" class="w-full bg-gray-700 text-gray-200 border border-gray-600 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500" required>
-                        </div>
-                        <div>
-                            <label for="thought-relationship" class="block text-gray-300 mb-1">I am a...</label>
-                            <select id="thought-relationship" name="thought-relationship" class="w-full bg-gray-700 text-gray-200 border border-gray-600 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500" required>
-                                <option value="">Select one</option>
-                                <option value="Student">Student</option>
-                                <option value="Parent">Parent</option>
-                                <option value="Alumnus">Alumnus</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="thought-message" class="block text-gray-300 mb-1">Your Thought</label>
-                            <textarea id="thought-message" name="thought-message" rows="4" class="w-full bg-gray-700 text-gray-200 border border-gray-600 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500" required></textarea>
-                        </div>
-                        <button type="submit" id="thought-submit-button" class="w-full bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 hover:bg-red-700 ripple">Submit Thought</button>
-                    </form>
-                    <div id="thought-status-message" class="hidden mt-6 p-4 rounded-lg text-center font-medium"></div>
-                </div>
-                <!-- Container for displaying thoughts -->
-                <div id="thoughts-container" class="space-y-8 text-left">
-                    <p class="text-center text-gray-500 italic">Loading student and parent thoughts...</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- FAQ Section -->
-        <section id="faq" class="py-20 fade-in">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-4xl font-bold mb-12 accent-red">Frequently Asked Questions</h2>
-                <!-- Container for dynamically loaded FAQs -->
-                <div id="faq-container" class="space-y-4 text-left">
-                    <!-- Sample FAQs -->
-                    <p class="text-center text-gray-500 italic">Loading FAQs...</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Courses Section -->
-        <section id="courses" class="py-20 fade-in">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-4xl font-bold mb-16 accent-red">Our Specialized Courses</h2>
-                <!-- Container for dynamically loaded courses -->
-                <div id="courses-container" class="grid md:grid-cols-2 gap-12 text-left">
-                    <!-- Sample Courses -->
-                    <p class="col-span-full text-center text-gray-500 italic">Loading courses...</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Gallery Section -->
-        <section id="gallery" class="py-20 fade-in">
-            <div class="max-w-6xl mx-auto text-center">
-                <h2 class="text-4xl font-bold mb-12 accent-red>Our Photo Gallery</h2>
-                  <!-- Container for dynamically loaded gallery images -->
-                <div id="gallery-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <p class="col-span-full text-center text-gray-500 italic">Loading gallery images...</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Admissions Process Section -->
-        <section id="admissions" class="py-20 fade-in">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-4xl font-bold mb-12 accent-red">Our Simple Admissions Process</h2>
-                <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-16">
-                    Joining Neev Institute is a straightforward process designed to get you started on your academic journey quickly.
-                </p>
-                <div class="grid md:grid-cols-3 gap-8 text-left">
-                    <div class="bg-gray-800 p-6 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl">
-                        <span class="text-red-400 text-5xl font-bold block mb-4">1.</span>
-                        <h3 class="text-2xl font-semibold text-gray-100 mb-2">Initial Inquiry</h3>
-                        <p class="text-gray-400">
-                            Begin by contacting us through phone or the contact form to schedule an appointment. We'll answer your initial questions and provide more information.
-                        </p>
-                    </div>
-                    <div class="bg-gray-800 p-6 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl">
-                        <span class="text-red-400 text-5xl font-bold block mb-4">2.</span>
-                        <h3 class="text-2xl font-semibold text-gray-100 mb-2">Counseling & Visit</h3>
-                        <p class="text-gray-400">
-                            Visit our institute with your child to meet our founders, discuss your academic goals, and get a feel for our learning environment.
-                        </p>
-                    </div>
-                    <div class="bg-gray-800 p-6 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl">
-                        <span class="text-red-400 text-5xl font-bold block mb-4">3.</span>
-                        <h3 class="text-2xl font-semibold text-gray-100 mb-2">Enrollment & Registration</h3>
-                        <p class="text-gray-400">
-                            Complete the registration form and necessary formalities to secure your child's place in the upcoming batch.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Contact Section -->
-        <section id="contact" class="py-20 fade-in">
-            <div class="max-w-2xl mx-auto text-center">
-                <h2 class="text-4xl font-bold mb-12 accent-red">Get in Touch</h2>
-                <div class="bg-gray-800 p-8 rounded-xl shadow-lg">
-                    <p class="text-xl text-gray-400 mb-4">
-                        For any inquiries, please contact us directly.
-                    </p>
-                    <p class="text-3xl font-bold text-gray-100 mb-4">
-                        Phone: <a href="tel:+919899156298" class="underline hover:text-red-500 transition-colors">+91 9899156298</a>
-                    </p>
-                    <div class="mt-8 space-y-4 text-left">
-                        <h3 class="text-2xl font-semibold text-red-400">Our Locations:</h3>
-                        <ul class="space-y-2 text-lg text-gray-400">
-                            <li>**Ashok Vihar:** F-3, Usha Chamber, 1st floor, central Market, Ashok Vihar, Above Old Master Bakers</li>
-                            <li>**Model Town:** 52/9 C-Block Model Town-3 Delhi</li>
-                        </ul>
-                    </div>
-                    <form id="contact-form" class="mt-8 space-y-4 text-left">
-                        <div>
-                            <label for="name" class="block text-gray-300 mb-1">Name</label>
-                            <input type="text" id="name" name="name" class="w-full bg-gray-700 text-gray-200 border border-gray-600 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Your Name" required>
-                        </div>
-                        <div>
-                            <label for="email" class="block text-gray-300 mb-1">Email</label>
-                            <input type="email" id="email" name="email" class="w-full bg-gray-700 text-gray-200 border border-gray-600 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Your Email" required>
-                        </div>
-                        <div>
-                            <label for="message" class="block text-gray-300 mb-1">Message</label>
-                            <textarea id="message" name="message" rows="4" class="w-full bg-gray-700 text-gray-200 border border-gray-600 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Your Message" required></textarea>
-                        </div>
-                        <button type="submit" id="submit-button" class="w-full bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 hover:bg-red-700 ripple">Send Message</button>
-                    </form>
-                    <div id="status-message" class="hidden mt-6 p-4 rounded-lg text-center font-medium"></div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Thank You Modal (Hidden by default) -->
-        <div id="thank-you-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-[999]">
-            <div class="bg-gray-800 p-8 rounded-xl shadow-2xl text-center max-w-sm w-full border-l-4 border-red-500">
-                <h3 class="text-3xl font-bold text-red-400 mb-4">Thank You!</h3>
-                <p class="text-lg text-gray-300 mb-6">Your message has been sent successfully. We will get back to you soon.</p>
-                <button id="close-modal-button" class="bg-red-600 text-white font-semibold py-2 px-6 rounded-full transition duration-300 hover:bg-red-700">Close</button>
             </div>
         </div>
-    </main>
+    </section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 py-8 text-center text-gray-500">
-        <div class="container mx-auto px-6">
-            <p class="mb-2">&copy; 2025 Neev Institute. All Rights Reserved.</p>
-            <p>Owned and Managed by <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600 font-bold">Arun Gupta</span> and <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600 font-bold">Rajni Gupta</span>.</p>
-            <p class="mt-2">Designed and Created By <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 font-bold">Naman Aggarwal</span></p>
-        </div>
-                          </footer>
+    <!-- Detailed Footer -->
+    <footer id="mentors" class="bg-[#050505] pt-24 pb-8 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+                <!-- Pillars / Founders Section -->
+                <div class="space-y-6 lg:col-span-2">
+                    <h4 class="text-white font-black uppercase tracking-[0.3em] text-[10px] mb-8">Our Respected Mentors</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                        <!-- Arun Gupta Swapped to Lead Position -->
+                        <div class="group">
+                            <h3 class="text-3xl font-black gradient-text-red tracking-tighter">Arun Gupta</h3>
+                            <p class="text-brand-red text-[10px] font-black uppercase tracking-widest mt-1">Founder & Academic Head</p>
+                            <div class="w-12 h-1 bg-brand-red mt-4 group-hover:w-full transition-all duration-500"></div>
+                            <p class="text-zinc-500 text-xs mt-4 leading-relaxed">Dedicated to sculpting young minds with over two decades of educational expertise.</p>
+                        </div>
+                        <!-- Rajni Gupta Swapped to Second Position -->
+                        <div class="group">
+                            <h3 class="text-3xl font-black gradient-text-red tracking-tighter">Rajni Gupta</h3>
+                            <p class="text-brand-red text-[10px] font-black uppercase tracking-widest mt-1">Co-Founder & Director</p>
+                            <div class="w-12 h-1 bg-brand-red mt-4 group-hover:w-full transition-all duration-500"></div>
+                            <p class="text-zinc-500 text-xs mt-4 leading-relaxed">Pioneer in strategic learning and academic management at Neev Institute.</p>
+                        </div>
+                    </div>
+                </div>
 
-      <!-- JavaScript for Firebase and website functionality -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, addDoc, collection, onSnapshot, query, orderBy, serverTimestamp, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-white font-black uppercase tracking-widest text-[10px] mb-8">Quick Links</h4>
+                    <ul class="space-y-4 text-xs font-bold uppercase tracking-tighter">
+                        <li><a href="#home" class="footer-link flex items-center"><i class="fas fa-chevron-right text-[8px] mr-2"></i> Home</a></li>
+                        <li><a href="#courses" class="footer-link flex items-center"><i class="fas fa-chevron-right text-[8px] mr-2"></i> Courses</a></li>
+                        <li><a href="#contact" class="footer-link flex items-center"><i class="fas fa-chevron-right text-[8px] mr-2"></i> Admissions</a></li>
+                    </ul>
+                </div>
 
-        // Global variables provided by the environment
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                <!-- Contact Info -->
+                <div>
+                    <h4 class="text-white font-black uppercase tracking-widest text-[10px] mb-8">Contact Info</h4>
+                    <ul class="space-y-4 text-xs">
+                        <li class="flex gap-4">
+                            <i class="fas fa-map-marker-alt text-brand-red"></i>
+                            <span class="text-zinc-500">Sector 12, Dwarka, New Delhi</span>
+                        </li>
+                        <li class="flex gap-4">
+                            <i class="fas fa-phone-alt text-brand-red"></i>
+                            <span class="text-zinc-400 font-bold">+91 98765 43210</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        // Authenticate the user
-        async function authenticateUser() {
-            try {
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-                console.log('Firebase authentication successful.');
-            } catch (error) {
-                console.error("Firebase authentication failed:", error);
-            }
-        }
-
-        // --- Core Website Functionality ---
-
-        // Smooth scroll and active link
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-
-        const sections = document.querySelectorAll('section');
-        const navLinks = document.querySelectorAll('.nav-link');
-        const mainHeader = document.getElementById('main-header');
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.clientHeight;
-                if (window.scrollY >= sectionTop - sectionHeight / 3) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href').slice(1) === current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // Fade-in on scroll animation
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('show');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, {
-            threshold: 0.1
-        });
-        document.querySelectorAll('.fade-in').forEach(section => {
-            observer.observe(section);
-        });
-
-        // Mobile menu toggle
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('open');
-        });
-        
-        // Event delegation for dynamically added FAQ items
-        document.getElementById('faq-container').addEventListener('click', (event) => {
-            const questionElement = event.target.closest('.faq-question');
-            if (!questionElement) return;
-
-            const answerElement = questionElement.nextElementSibling;
-            const icon = questionElement.querySelector('span');
-            
-            answerElement.classList.toggle('open');
-            icon.textContent = answerElement.classList.contains('open') ? '—' : '+';
-        });
-
-        // Handle contact form submission
-        document.getElementById('contact-form').addEventListener('submit', async function(event) {
-            event.preventDefault();
-
-            const submitButton = document.getElementById('submit-button');
-            const thankYouModal = document.getElementById('thank-you-modal');
-            const form = event.target;
-            
-            submitButton.disabled = true;
-            submitButton.textContent = 'Sending...';
-
-            const name = form.name.value;
-            const email = form.email.value;
-            const message = form.message.value;
-
-            try {
-                // Add a new document to the contact-forms collection
-                const docRef = await addDoc(collection(db, `/artifacts/${appId}/public/data/contact-forms`), {
-                    name: name,
-                    email: email,
-                    message: message,
-                    timestamp: new Date().toISOString()
-                });
+            <!-- Bottom Bar -->
+            <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+                <p class="text-zinc-600 text-[9px] font-black uppercase tracking-[0.2em]">
+                    &copy; 2026 NEEV INSTITUTE. ALL RIGHTS RESERVED.
+                </p>
                 
-                form.reset();
-                thankYouModal.classList.remove('hidden');
+                <!-- Attribution Line -->
+                <div class="text-[11px] font-black uppercase tracking-[0.1em]">
+                    <span class="text-zinc-500">Created and designed by</span> 
+                    <span class="naman-attribution ml-1">Naman Aggarwal</span>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-            } catch (e) {
-                console.error("Error adding document: ", e);
-            } finally {
-                submitButton.disabled = false;
-                submitButton.textContent = 'Send Message';
-            }
+    <script>
+        // Loader Logic
+        window.addEventListener("load", function() {
+            setTimeout(() => {
+                const loader = document.getElementById("loader");
+                loader.style.opacity = "0";
+                setTimeout(() => {
+                    loader.style.visibility = "hidden";
+                    reveal();
+                }, 800);
+            }, 1500);
         });
 
-        // Close thank you modal
-        document.getElementById('close-modal-button').addEventListener('click', () => {
-            document.getElementById('thank-you-modal').classList.add('hidden');
-        });
-
-        // Handle new thought form submission
-        document.getElementById('thought-form').addEventListener('submit', async function(event) {
-            event.preventDefault();
-
-            const submitButton = document.getElementById('thought-submit-button');
-            const statusMessage = document.getElementById('thought-status-message');
-            const form = event.target;
-            
-            submitButton.disabled = true;
-            submitButton.textContent = 'Submitting...';
-            statusMessage.textContent = '';
-            statusMessage.classList.remove('hidden', 'bg-green-500', 'bg-red-500');
-
-            const name = form['thought-name'].value;
-            const relationship = form['thought-relationship'].value;
-            const message = form['thought-message'].value;
-
-            try {
-                const docRef = await addDoc(collection(db, `/artifacts/${appId}/public/data/thoughts`), {
-                    name: name,
-                    relationship: relationship,
-                    message: message,
-                    timestamp: serverTimestamp()
-                });
-                
-                statusMessage.textContent = 'Thank you! Your thought has been shared with the Neev community.';
-                statusMessage.classList.add('bg-green-500');
-                form.reset();
-
-            } catch (e) {
-                console.error("Error adding document: ", e);
-                statusMessage.textContent = 'Something went wrong. Please try again later.';
-                statusMessage.classList.add('bg-red-500');
-            } finally {
-                submitButton.disabled = false;
-                submitButton.textContent = 'Submit Thought';
-                statusMessage.classList.remove('hidden');
-            }
-        });
-
-
-        // --- Firestore Listeners ---
-
-        // Testimonials Listener
-        function setupTestimonialListener() {
-            const testimonialsContainer = document.getElementById('testimonials-container');
-            const testimonialsRef = collection(db, `/artifacts/${appId}/public/data/testimonials`);
-
-            onSnapshot(testimonialsRef, (snapshot) => {
-                if (snapshot.docs.length > 0) {
-                    testimonialsContainer.innerHTML = ''; 
-                    snapshot.forEach((doc) => {
-                        const data = doc.data();
-                        const testimonialDiv = document.createElement('div');
-                        testimonialDiv.classList.add('bg-gray-800', 'p-6', 'rounded-xl', 'shadow-lg', 'border-l-4', 'border-red-500', 'transition-all', 'duration-300', 'hover:scale-105', 'hover:shadow-2xl');
-                        testimonialDiv.innerHTML = `
-                            <p class="text-gray-300 italic mb-4">"${data.quote}"</p>
-                            <p class="font-semibold text-gray-100">- ${data.author}, ${data.description}</p>
-                        `;
-                        testimonialsContainer.appendChild(testimonialDiv);
-                    });
+        // Scroll Reveal
+        function reveal() {
+            const reveals = document.querySelectorAll(".reveal");
+            reveals.forEach(el => {
+                const windowHeight = window.innerHeight;
+                const elementTop = el.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 50) {
+                    el.classList.add("active");
                 }
-            }, (error) => {
-                console.error("Error fetching testimonials: ", error);
             });
         }
-
-        // FAQs Listener
-        function setupFAQListener() {
-            const faqContainer = document.getElementById('faq-container');
-            const faqRef = collection(db, `/artifacts/${appId}/public/data/faqs`);
-
-            onSnapshot(faqRef, (snapshot) => {
-                if (snapshot.docs.length > 0) {
-                    faqContainer.innerHTML = ''; 
-                    snapshot.forEach((doc) => {
-                        const data = doc.data();
-                        const faqItemDiv = document.createElement('div');
-                        faqItemDiv.classList.add('bg-gray-800', 'p-6', 'rounded-xl', 'shadow-lg');
-                        faqItemDiv.innerHTML = `
-                            <h3 class="text-xl font-semibold flex justify-between items-center faq-question">
-                                ${data.question}
-                                <span>+</span>
-                            </h3>
-                            <p class="faq-answer text-gray-400">
-                                ${data.answer}
-                            </p>
-                        `;
-                        faqContainer.appendChild(faqItemDiv);
-                    });
-                }
-            }, (error) => {
-                console.error("Error fetching FAQs: ", error);
-            });
-        }
-
-        // Courses Listener
-        function setupCoursesListener() {
-            const coursesContainer = document.getElementById('courses-container');
-            const coursesRef = collection(db, `/artifacts/${appId}/public/data/courses`);
-
-            onSnapshot(coursesRef, (snapshot) => {
-                if (snapshot.docs.length > 0) {
-                    coursesContainer.innerHTML = ''; 
-                    snapshot.forEach((doc) => {
-                        const data = doc.data();
-                        const courseDiv = document.createElement('div');
-                        courseDiv.classList.add('bg-gray-800', 'p-8', 'rounded-xl', 'shadow-lg', 'transition-all', 'duration-300', 'hover:scale-105', 'hover:shadow-2xl');
-
-                        let subjectsList = '';
-                        if (data.items && Array.isArray(data.items)) {
-                            subjectsList = data.items.map(subject => `
-                                <li class="hover:text-red-500 transition-colors duration-200">${subject}</li>
-                            `).join('');
-                        }
-
-                        courseDiv.innerHTML = `
-                            <h3 class="text-2xl font-bold text-red-500 mb-4">${data.title}</h3>
-                            <ul class="space-y-3 text-lg font-medium text-gray-400">
-                                ${subjectsList}
-                            </ul>
-                        `;
-                        coursesContainer.appendChild(courseDiv);
-                    });
-                }
-            }, (error) => {
-                console.error("Error fetching courses: ", error);
-            });
-        }
-                // Gallery Listener
-        function setupGalleryListener() {
-            const galleryContainer = document.getElementById('gallery-container');
-            const galleryRef = collection(db, `/artifacts/${appId}/public/data/gallery`);
-
-            onSnapshot(galleryRef, (snapshot) => {
-                if (snapshot.docs.length > 0) {
-                    galleryContainer.innerHTML = '';
-                    snapshot.forEach((doc) => {
-                        const data = doc.data();
-                        const galleryItemDiv = document.createElement('div');
-                        galleryItemDiv.classList.add('bg-gray-800', 'p-4', 'rounded-xl', 'shadow-lg', 'transition-all', 'duration-300', 'hover:scale-105', 'hover:shadow-2xl', 'flex', 'flex-col');
-                        galleryItemDiv.innerHTML = `
-                            <img src="${data.imageUrl}" alt="${data.title}" class="rounded-lg mb-4 object-cover w-full h-48" onerror="this.onerror=null;this.src='https://placehold.co/400x300/1e293b/cbd5e1?text=Image+Not+Found';">
-                            <h3 class="text-xl font-semibold text-gray-100 mb-2">${data.title}</h3>
-                            <p class="text-gray-400">${data.description}</p>
-                        `;
-                        galleryContainer.appendChild(galleryItemDiv);
-                    });
-                }
-            }, (error) => {
-                console.error("Error fetching gallery images: ", error);
-            });
-        }
-
-        // Populates the success stories database on first load if it's empty
-        async function populateSuccessStories() {
-            const storiesRef = collection(db, `/artifacts/${appId}/public/data/successStories`);
-            const storiesSnapshot = await getDocs(storiesRef);
-
-            if (storiesSnapshot.empty) {
-                console.log("Populating success stories database...");
-                const storiesData = [
-                    { id: "story1", name: "Anya L.", imageUrl: "https://placehold.co/150x150/1e293b/cbd5e1?text=Anya+L.", details: "Scored 98% in Accountancy", story: "Anya struggled to grasp the core concepts in Accountancy. With the personalized attention and simplified teaching methods at Neev Institute, she not only passed her exams but also achieved a remarkable 98%." },
-                    { id: "story2", name: "Rohan K.", imageUrl: "https://placehold.co/150x150/1e293b/cbd5e1?text=Rohan+K.", details: "Improved Maths grade from 65% to 92%", story: "Rohan's confidence in Mathematics was low, and his grades reflected it. Through regular doubt-clearing sessions and a focus on problem-solving, he developed a strong understanding and boosted his score dramatically." },
-                    { id: "story3", name: "Priya S.", imageUrl: "https://placehold.co/150x150/1e293b/cbd5e1?text=Priya+S.", details: "Topped her school in Economics", story: "Priya's passion for Economics was ignited at Neev Institute. Her teacher's use of real-world examples and clear explanations gave her a deep conceptual understanding, enabling her to excel and top her school." },
-                    { id: "story4", name: "Ananya M.", imageUrl: "https://placehold.co/150x150/1e293b/cbd5e1?text=Ananya+M.", details: "Scored 100% in Class 10 Science", story: "Ananya always had a keen interest in Science, but our practical teaching approach helped her connect the dots. The hands-on experiments and dedicated guidance led to her perfect score." },
-                    { id: "story5", name: "Siddharth J.", imageUrl: "https://placehold.co/150x150/1e293b/cbd5e1?text=Siddharth+J.", details: "Gained admission to a top university", story: "The strong foundation laid at Neev Institute was crucial for Siddharth. He not only excelled academically but also received invaluable career guidance that helped him secure a spot at a prestigious university." }
-                ];
-
-                for (const story of storiesData) {
-                    await setDoc(doc(db, `/artifacts/${appId}/public/data/successStories`, story.id), story);
-                }
-                console.log("Success stories populated.");
-            }
-        }
-        
-        // Populates the testimonials database on first load if it's empty
-        async function populateTestimonials() {
-            const testimonialsRef = collection(db, `/artifacts/${appId}/public/data/testimonials`);
-            const testimonialsSnapshot = await getDocs(testimonialsRef);
-
-            if (testimonialsSnapshot.empty) {
-                console.log("Populating testimonials database...");
-                const testimonialsData = [
-                    { id: "testimonial1", quote: "Neev Institute provided the perfect balance of academic rigor and personal support. My daughter's grades have improved dramatically.", author: "Mrs. Sharma", description: "Parent" },
-                    { id: "testimonial2", quote: "I finally understand difficult concepts in Accountancy. The teachers are incredibly patient and make learning enjoyable.", author: "Rohan K.", description: "Student" },
-                    { id: "testimonial3", quote: "The small class sizes at Neev allowed me to get the one-on-one attention I needed to pass my exams with confidence. Highly recommended!", author: "Priya D.", description: "Student" },
-                    { id: "testimonial4", quote: "Neev Institute is more than just a coaching center; it's a family. The support we received was invaluable in my son's academic journey.", author: "Mr. Kumar", description: "Parent" }
-                ];
-                for (const testimonial of testimonialsData) {
-                    await setDoc(doc(db, `/artifacts/${appId}/public/data/testimonials`, testimonial.id), testimonial);
-                }
-                console.log("Testimonials populated.");
-            }
-        }
-
-        // Populates the FAQs database on first load if it's empty
-        async function populateFAQs() {
-            const faqsRef = collection(db, `/artifacts/${appId}/public/data/faqs`);
-            const faqsSnapshot = await getDocs(faqsRef);
-            if (faqsSnapshot.empty) {
-                console.log("Populating FAQs database...");
-                const faqsData = [
-                    { id: "faq1", question: "What classes do you offer?", answer: "We specialize in Commerce for Class 11th and 12th, and provide comprehensive coaching for all subjects for students from Class 5th to 10th." },
-                    { id: "faq2", question: "How can I enroll my child?", answer: "You can start by calling us at our contact number or filling out the contact form. We'll then schedule an in-person meeting to guide you through the enrollment process." },
-                    { id: "faq3", question: "What makes Neev different from other institutes?", answer: "Our unique approach focuses on a small student-to-teacher ratio, allowing for personalized attention and mentorship. We don't just teach subjects; we build foundational skills and critical thinking abilities." },
-                    { id: "faq4", question: "Do you provide study materials?", answer: "Yes, we provide comprehensive and up-to-date study materials, including notes, practice questions, and mock tests, all designed to align with the latest CBSE curriculum." },
-                    { id: "faq5", question: "How often are the classes held?", answer: "Our class schedule is flexible and designed to accommodate school timings. We typically hold classes 3-4 times a week for each subject, with additional doubt-clearing sessions on weekends." }
-                ];
-                for (const faq of faqsData) {
-                    await setDoc(doc(db, `/artifacts/${appId}/public/data/faqs`, faq.id), faq);
-                }
-                console.log("FAQs populated.");
-            }
-        }
-
-        // Populates the courses database on first load if it's empty
-        async function populateCourses() {
-            const coursesRef = collection(db, `/artifacts/${appId}/public/data/courses`);
-            const coursesSnapshot = await getDocs(coursesRef);
-
-            if (coursesSnapshot.empty) {
-                console.log("Populating courses database...");
-                const coursesData = [
-                    { id: "course1", title: "Class 11 & 12 (Commerce)", items: ["Accountancy", "Economics", "Business Studies"] },
-                    { id: "course2", title: "Class 5th to 10th", items: ["All Core Subjects", "Science", "Mathematics", "English"] }
-                ];
-                for (const course of coursesData) {
-                    await setDoc(doc(db, `/artifacts/${appId}/public/data/courses`, course.id), course);
-                }
-                console.log("Courses populated.");
-            }
-        }
-        
-        // Populates the gallery database on first load if it's empty
-        async function populateGallery() {
-            const galleryRef = collection(db, `/artifacts/${appId}/public/data/gallery`);
-            const gallerySnapshot = await getDocs(galleryRef);
-            if (gallerySnapshot.empty) {
-                console.log("Populating gallery database...");
-                const galleryData = [
-                    { id: "gallery1", title: "Learning in Action", description: "A view of our students during a typical class session.", imageUrl: "https://placehold.co/600x400/1e293b/cbd5e1?text=Classroom" },
-                    { id: "gallery2", title: "Annual Sports Day", description: "Students celebrating at our annual sports event.", imageUrl: "https://placehold.co/600x400/1e293b/cbd5e1?text=Event" },
-                    { id: "gallery3", title: "Our Dedicated Team", description: "Our faculty and staff committed to your child's success.", imageUrl: "https://placehold.co/600x400/1e293b/cbd5e1?text=Team" },
-                    { id: "gallery4", title: "Study Group", description: "Students working together in a study group.", imageUrl: "https://placehold.co/600x400/1e293b/cbd5e1?text=Study+Group" },
-                    { id: "gallery5", title: "Interactive Session", description: "An interactive session with our experienced educators.", imageUrl: "https://placehold.co/600x400/1e293b/cbd5e1?text=Interactive+Session" },
-                    { id: "gallery6", title: "Lab Experiment", description: "Students conducting an experiment in our science lab.", imageUrl: "https://placehold.co/600x400/1e293b/cbd5e1?text=Lab+Experiment" }
-                ];
-                for (const item of galleryData) {
-                    await setDoc(doc(db, `/artifacts/${appId}/public/data/gallery`, item.id), item);
-                }
-                console.log("Gallery populated.");
-            }
-        }
-
-        // Success Stories Listener
-        function setupSuccessStoriesListener() {
-            const container = document.getElementById('success-stories-container');
-            const ref = collection(db, `/artifacts/${appId}/public/data/successStories`);
-        
-            onSnapshot(ref, (snapshot) => {
-                // Clear existing stories and show placeholder if no data
-                container.innerHTML = snapshot.empty ? '<p class="text-center text-gray-500 italic">No success stories found.</p>' : '';
-        
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const storyDiv = document.createElement('div');
-                    storyDiv.classList.add('bg-gray-800', 'p-8', 'rounded-xl', 'shadow-lg', 'flex', 'flex-col', 'md:flex-row', 'items-center', 'md:items-start', 'space-y-6', 'md:space-y-0', 'md:space-x-8', 'fade-in');
-                    storyDiv.innerHTML = `
-                        <img src="${data.imageUrl}" alt="Student ${data.name}" class="w-32 h-32 rounded-full flex-shrink-0 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/150x150/1e293b/cbd5e1?text=Image+Not+Found';">
-                        <div class="flex-grow">
-                            <h3 class="text-3xl font-bold text-red-500 mb-2">${data.name}</h3>
-                            <p class="text-lg text-gray-300 mb-4">${data.details}</p>
-                            <p class="text-gray-400">${data.story}</p>
-                        </div>
-                    `;
-                    container.appendChild(storyDiv);
-                    observer.observe(storyDiv);
-                });
-            }, (error) => {
-                console.error("Error fetching success stories: ", error);
-                container.innerHTML = '<p class="text-center text-red-400 italic">Error loading stories. Please try again later.</p>';
-            });
-        }
-        
-        // Thoughts Listener
-        function setupThoughtsListener() {
-            const container = document.getElementById('thoughts-container');
-            const ref = query(collection(db, `/artifacts/${appId}/public/data/thoughts`), orderBy('timestamp', 'desc'));
-
-            onSnapshot(ref, (snapshot) => {
-                container.innerHTML = snapshot.empty ? '<p class="text-center text-gray-500 italic">No thoughts shared yet. Be the first to add one!</p>' : '';
-        
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const thoughtDiv = document.createElement('div');
-                    thoughtDiv.classList.add('bg-gray-800', 'p-6', 'rounded-xl', 'shadow-lg', 'fade-in');
-
-                    const timestamp = data.timestamp ? data.timestamp.toDate().toLocaleString() : 'Just now';
-
-                    thoughtDiv.innerHTML = `
-                        <div class="flex justify-between items-center mb-2">
-                            <h3 class="text-xl font-bold text-gray-100">${data.name}</h3>
-                            <span class="text-sm text-red-400">${data.relationship}</span>
-                        </div>
-                        <p class="text-gray-400 italic mb-4">"${data.message}"</p>
-                        <p class="text-xs text-gray-500 text-right">${timestamp}</p>
-                    `;
-                    container.appendChild(thoughtDiv);
-                    observer.observe(thoughtDiv);
-                });
-            }, (error) => {
-                console.error("Error fetching thoughts: ", error);
-                container.innerHTML = '<p class="text-center text-red-400 italic">Error loading thoughts. Please try again later.</p>';
-            });
-        }
-        
-        // Ripple effect on buttons
-        document.querySelectorAll('.ripple').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const rect = e.target.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                e.target.style.setProperty('--x', `${x}px`);
-                e.target.style.setProperty('--y', `${y}px`);
-            });
-        });
-
-
-        window.onload = async function() {
-            await authenticateUser();
-            await populateSuccessStories();
-            await populateTestimonials();
-            await populateFAQs();
-            await populateCourses();
-            await populateGallery();
-            setupTestimonialListener();
-            setupFAQListener();
-            setupCoursesListener();
-            setupGalleryListener();
-            setupSuccessStoriesListener();
-            setupThoughtsListener();
-        };
+        window.addEventListener("scroll", reveal);
     </script>
 </body>
 </html>
